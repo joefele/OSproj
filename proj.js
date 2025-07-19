@@ -130,15 +130,18 @@ function runSJFPreemptive() {
     const queue = [...processes].map(p => ({ ...p }));
     let currentTime = 0;
     const result = [];
-    let lastProcess = null;
+    let lastPid = null;
+
+    // Track first response time
+    const started = {};
 
     while (queue.some(p => p.remainingTime > 0)) {
         const ready = queue.filter(p => p.arrivalTime <= currentTime && p.remainingTime > 0);
 
         if (ready.length === 0) {
-            if (lastProcess !== 'IDLE') {
+            if (lastPid !== 'IDLE') {
                 result.push({ pid: 'IDLE', start: currentTime, end: currentTime + 1 });
-                lastProcess = 'IDLE';
+                lastPid = 'IDLE';
             } else {
                 result[result.length - 1].end++;
             }
@@ -146,11 +149,19 @@ function runSJFPreemptive() {
             continue;
         }
 
+        // Select process with shortest remaining time
         const shortest = ready.reduce((a, b) => a.remainingTime < b.remainingTime ? a : b);
 
-        if (lastProcess !== shortest.pid) {
+        // Track response time once
+        if (!(shortest.pid in started)) {
+            shortest.responseTime = currentTime - shortest.arrivalTime;
+            started[shortest.pid] = true;
+        }
+
+        // Handle process switching
+        if (lastPid !== shortest.pid) {
             result.push({ pid: shortest.pid, start: currentTime, end: currentTime + 1 });
-            lastProcess = shortest.pid;
+            lastPid = shortest.pid;
         } else {
             result[result.length - 1].end++;
         }
@@ -162,6 +173,8 @@ function runSJFPreemptive() {
     displayGantt(result);
     calculateMetrics(result);
 }
+
+
 
 function simulate() {
     const algo = document.getElementById('algorithm').value;
@@ -213,11 +226,20 @@ function calculateMetrics(schedule) {
     };
 
     tableBody.innerHTML = '';
+
     processes.forEach(p => {
-        const ganttInfo = schedule.find(s => s.pid === p.pid);
-        const completionTime = ganttInfo ? ganttInfo.end : 0;
-        const responseTime = ganttInfo ? ganttInfo.start - p.arrivalTime : 0;
+        // Get all Gantt entries for the process
+        const ganttEntries = schedule.filter(s => s.pid === p.pid);
+
+        // If process never ran
+        if (ganttEntries.length === 0) return;
+
+        const startTime = ganttEntries[0].start;
+        const endTime = ganttEntries[ganttEntries.length - 1].end;
+
+        const completionTime = endTime;
         const turnaroundTime = completionTime - p.arrivalTime;
+        const responseTime = startTime - p.arrivalTime;
 
         averages.turnaround += turnaroundTime;
         averages.response += responseTime;
@@ -242,3 +264,6 @@ function calculateMetrics(schedule) {
 
     document.getElementById('resultsSection').classList.remove('hidden');
 }
+
+
+
