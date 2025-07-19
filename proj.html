@@ -8,33 +8,22 @@
 </head>
 <body>
     <div class="container">
-       
+  
         <div class="header">
             <h1>CPU Scheduling Simulator</h1>
             <p>Select a Scheduling Algorithm to Simulate</p>
         </div>
 
+       
         <div class="card">
             <h2>Process Configuration</h2>
-            <div class="form-group">
-                <label>Input Mode:</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="inputMode" value="manual" checked>
-                        Manual Entry
-                    </label>
-                    <label>
-                        <input type="radio" name="inputMode" value="random">
-                        Random Generation
-                    </label>
-                </div>
-            </div>
 
             <div class="form-group">
                 <label for="numProcesses">Number of Processes:</label>
                 <input type="number" id="numProcesses" value="3" min="1" max="10">
             </div>
 
+           
             <div class="form-group">
                 <label for="algorithmSelect">Select Scheduling Algorithm:</label>
                 <select id="algorithmSelect" class="form-control">
@@ -47,11 +36,13 @@
                 </select>
             </div>
 
-            <div class="form-group" id="timeQuantumGroup" style="display: none;">
+       
+            <div class="form-group hidden" id="timeQuantumGroup">
                 <label for="timeQuantum">Time Quantum (for RR or MLFQ):</label>
                 <input type="number" id="timeQuantum" min="1" value="2">
             </div>
 
+           
             <div id="manualInput" class="form-group">
                 <h3>Add Process Manually:</h3>
                 <div class="input-row">
@@ -67,7 +58,7 @@
                         <label>Burst Time</label>
                         <input type="number" id="burstTime" min="1" placeholder="1">
                     </div>
-                    <div class="input-field" id="priorityField" style="display: none;">
+                    <div class="input-field hidden" id="priorityField">
                         <label>Priority</label>
                         <input type="number" id="priority" min="0" placeholder="0">
                     </div>
@@ -77,6 +68,7 @@
                 </div>
             </div>
 
+           
             <div class="form-group">
                 <h3>Current Processes:</h3>
                 <div id="processList" class="process-list">
@@ -97,13 +89,16 @@
             </div>
         </div>
 
-        
         <div id="resultsSection" class="hidden">
+          
             <div class="card">
                 <h2>Gantt Chart</h2>
-                <div id="ganttChart" class="gantt-container"></div>
+                <div id="ganttChart" class="gantt-container">
+                  
+                </div>
             </div>
 
+         
             <div class="card">
                 <h2>Process Table</h2>
                 <div class="table-container">
@@ -118,38 +113,31 @@
                                 <th>Response Time</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                       
+                        </tbody>
                     </table>
                 </div>
-                <div id="averageMetrics" class="average-metrics"></div>
-            </div>
-
-           
-            <div id="progressSection" class="hidden">
-                <h2>Process Progress</h2>
-                <div id="progress-container"></div>
+                <div id="averageMetrics" class="average-metrics">
+                   
+                </div>
             </div>
         </div>
     </div>
 
     <script src="proj.js"></script>
     <script>
+        
         document.getElementById("algorithmSelect").addEventListener("change", function () {
             const algorithm = this.value;
-            document.getElementById("timeQuantumGroup").style.display =
-                algorithm === "rr" || algorithm === "mlfq" ? "block" : "none";
-            document.getElementById("priorityField").style.display =
-                algorithm === "priority" ? "block" : "none";
+            document.getElementById("timeQuantumGroup").classList.toggle("hidden", !(algorithm === "rr" || algorithm === "mlfq"));
+            document.getElementById("priorityField").classList.toggle("hidden", algorithm !== "priority");
         });
+
 
         function runSelectedAlgorithm() {
             const algorithm = document.getElementById("algorithmSelect").value;
 
-            
-            document.getElementById("progressSection").classList.remove("hidden");
-            document.getElementById("progress-container").innerHTML = '';  
-
-           
             switch (algorithm) {
                 case "fcfs":
                     runFCFS();
