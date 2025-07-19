@@ -14,11 +14,11 @@
             <p>Select a Scheduling Algorithm to Simulate</p>
         </div>
 
-        <!-- Input Section -->
+     
         <div class="card">
             <h2>Process Configuration</h2>
 
-            <!-- Input Mode Selection -->
+         
             <div class="form-group">
                 <label>Input Mode:</label>
                 <div class="radio-group">
@@ -33,13 +33,13 @@
                 </div>
             </div>
 
-            <!-- Number of Processes -->
+           
             <div class="form-group">
                 <label for="numProcesses">Number of Processes:</label>
                 <input type="number" id="numProcesses" value="3" min="1" max="10">
             </div>
 
-            <!-- Algorithm Selection -->
+           
             <div class="form-group">
                 <label for="algorithmSelect">Select Scheduling Algorithm:</label>
                 <select id="algorithmSelect" class="form-control">
@@ -52,13 +52,13 @@
                 </select>
             </div>
 
-            <!-- Time Quantum Input (visible only for RR & MLFQ) -->
+        
             <div class="form-group" id="timeQuantumGroup" style="display: none;">
                 <label for="timeQuantum">Time Quantum (for RR or MLFQ):</label>
                 <input type="number" id="timeQuantum" min="1" value="2">
             </div>
 
-            <!-- Manual Input Section -->
+       
             <div id="manualInput" class="form-group">
                 <h3>Add Process Manually:</h3>
                 <div class="input-row">
@@ -84,7 +84,7 @@
                 </div>
             </div>
 
-            <!-- Process List Display -->
+          
             <div class="form-group">
                 <h3>Current Processes:</h3>
                 <div id="processList" class="process-list">
@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- Control Buttons -->
+           
             <div class="button-group">
                 <button onclick="generateRandomProcesses()" class="btn btn-success">
                     Generate Random Processes
@@ -106,24 +106,35 @@
             </div>
         </div>
 
-        <!-- Results Section -->
-        <div id="resultsSection" class="hidden">
-            <!-- Gantt Chart -->
+        
+       <div id="resultsSection" class="hidden">
             <div class="card">
                 <h2>Gantt Chart</h2>
                 <div id="ganttChart" class="gantt-container">
-                    <!-- Gantt chart will be displayed here -->
                 </div>
-            </div>
+        </div>
 
-            <!-- Process Metrics -->
             <div class="card">
-                <h2>Process Metrics</h2>
-                <div id="metricsTable" class="table-container">
-                    <!-- Metrics table will be displayed here -->
+                <h2>Process Table</h2>
+                <div class="table-container">
+                    <table id="metricsTable">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Arrival Time</th>
+                                <th>Burst Time</th>
+                                <th>Completion Time</th>
+                                <th>Turnaround Time</th>
+                                <th>Response Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
                 </div>
                 <div id="averageMetrics" class="average-metrics">
-                    <!-- Average calculations will be displayed here -->
+                
                 </div>
             </div>
         </div>
@@ -131,7 +142,7 @@
 
     <script src="proj.js"></script>
     <script>
-        // Show/hide input fields based on selected algorithm
+       
         document.getElementById("algorithmSelect").addEventListener("change", function () {
             const algorithm = this.value;
             document.getElementById("timeQuantumGroup").style.display =
@@ -140,7 +151,7 @@
                 algorithm === "priority" ? "block" : "none";
         });
 
-        // Run selected algorithm
+       
         function runSelectedAlgorithm() {
             const algorithm = document.getElementById("algorithmSelect").value;
 
