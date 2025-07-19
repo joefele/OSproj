@@ -174,25 +174,81 @@ function runSJFPreemptive() {
     calculateMetrics(result);
 }
 
+function runRoundRobin() {
+    console.log("Running Round Robin...");
+    const quantum = parseInt(document.getElementById('quantum').value, 10);
 
-
-function simulate() {
-    const algo = document.getElementById('algorithm').value;
-
-    switch (algo) {
-        case 'fcfs':
-            runFCFS();
-            break;
-        case 'sjf-np':
-            runSJFNonPreemptive();
-            break;
-        case 'sjf-p':
-            runSJFPreemptive();
-            break;
-        default:
-            alert("Please select a valid scheduling algorithm.");
+    if (isNaN(quantum) || quantum <= 0) {
+        alert("Please enter a valid quantum time.");
+        return;
     }
+
+    const queue = [...processes].map(p => ({ ...p }));
+    const result = [];
+    const readyQueue = [];
+    let currentTime = 0;
+    let lastPid = null;
+
+    queue.sort((a, b) => a.arrivalTime - b.arrivalTime);
+    let arrivedIndex = 0;
+
+    while (queue.some(p => p.remainingTime > 0)) {
+        // Add newly arrived processes to ready queue
+        while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= currentTime) {
+            readyQueue.push(queue[arrivedIndex]);
+            arrivedIndex++;
+        }
+
+        if (readyQueue.length === 0) {
+            // If no process is ready, insert idle time
+            if (lastPid !== 'IDLE') {
+                result.push({ pid: 'IDLE', start: currentTime, end: currentTime + 1 });
+                lastPid = 'IDLE';
+            } else {
+                result[result.length - 1].end++;
+            }
+            currentTime++;
+            continue;
+        }
+
+        const currentProcess = readyQueue.shift();
+
+        if (lastPid !== currentProcess.pid) {
+            result.push({
+                pid: currentProcess.pid,
+                start: currentTime,
+                end: currentTime + Math.min(quantum, currentProcess.remainingTime)
+            });
+        } else {
+            result[result.length - 1].end += Math.min(quantum, currentProcess.remainingTime);
+        }
+
+        const execTime = Math.min(quantum, currentProcess.remainingTime);
+        currentProcess.remainingTime -= execTime;
+        currentTime += execTime;
+
+        // Add any processes that arrived during execution
+        while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= currentTime) {
+            readyQueue.push(queue[arrivedIndex]);
+            arrivedIndex++;
+        }
+
+        if (currentProcess.remainingTime > 0) {
+            readyQueue.push(currentProcess);
+        }
+
+        lastPid = currentProcess.pid;
+    }
+
+    displayGantt(result);
+    calculateMetrics(result);
 }
+
+
+
+
+
+
 
 function displayGantt(schedule) {
     const chart = document.getElementById('ganttChart');
