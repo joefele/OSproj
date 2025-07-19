@@ -1,4 +1,4 @@
-/* Reset some default browser styles */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -16,7 +16,7 @@ body {
     margin: 0 auto;
 }
 
-/* Header */
+
 .header {
     text-align: center;
     margin-bottom: 30px;
@@ -32,7 +32,7 @@ body {
     color: #666;
 }
 
-/* Cards */
+
 .card {
     background-color: #4a525a;
     padding: 20px 25px;
@@ -41,7 +41,7 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Form Controls */
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -80,7 +80,7 @@ select {
     min-width: 120px;
 }
 
-/* Buttons */
+
 .btn {
     padding: 8px 16px;
     border: none;
@@ -124,7 +124,7 @@ select {
     margin-top: 10px;
 }
 
-/* Process List */
+
 .process-list {
     background-color: #f9f9f9;
     border: 1px dashed #ccc;
@@ -137,7 +137,7 @@ select {
     color: #999;
 }
 
-/* Gantt Chart */
+
 .gantt-container {
     display: flex;
     flex-wrap: wrap;
@@ -153,7 +153,7 @@ select {
     min-width: 50px;
 }
 
-/* Metrics Table */
+
 .table-container table {
     width: 100%;
     border-collapse: collapse;
@@ -171,18 +171,18 @@ select {
     background-color: #f0f0f0;
 }
 
-/* Averages Section */
+
 .average-metrics {
     margin-top: 15px;
     font-weight: bold;
 }
 
-/* Hidden class */
+
 .hidden {
     display: none;
 }
 
-/* Responsive tweaks */
+
 @media (max-width: 600px) {
     .input-row {
         flex-direction: column;
