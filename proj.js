@@ -318,21 +318,15 @@ function runMLFQ() {
     calculateMetrics(result);
 }
 
-
-
-    
-
-
-
-
-
-
-
 function displayGantt(schedule) {
     const chart = document.getElementById('ganttChart');
     chart.innerHTML = '';
 
     const totalTime = schedule[schedule.length - 1].end;
+
+    // Render time labels BEFORE the Gantt chart blocks
+    renderTimeLabels(totalTime);
+
     schedule.forEach(item => {
         const block = document.createElement('div');
         block.className = 'gantt-block';
@@ -350,6 +344,18 @@ function displayGantt(schedule) {
         chart.appendChild(block);
     });
 }
+
+
+    
+
+
+
+
+
+
+
+
+
 
 function calculateMetrics(schedule) {
     const tableBody = document.querySelector('#metricsTable tbody');
@@ -397,6 +403,24 @@ function calculateMetrics(schedule) {
     `;
 
     document.getElementById('resultsSection').classList.remove('hidden');
+}   
+function renderTimeLabels(totalTime) {
+    const labelContainer = document.getElementById('time-labels');
+    labelContainer.innerHTML = '';
+
+    for (let i = 0; i <= totalTime; i++) {
+        const label = document.createElement('span');
+        label.innerText = i;
+        label.style.display = 'inline-block';
+        label.style.width = '61px'; // Must match width per time unit
+        label.style.textAlign = 'center';
+        label.style.fontSize = '12px';
+        label.style.color = '#444';
+        labelContainer.appendChild(label);
+    }
 }
+
+
+
 
 
