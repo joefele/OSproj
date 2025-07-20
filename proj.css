@@ -1,7 +1,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #b0e0e6 ;
     margin: 0;
     padding: 20px;
     color: #333;
@@ -23,7 +23,7 @@ body {
 
 
 .card {
-    background-color: #ffffff;
+    background-color:   #f5f7fa;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 12px;
