@@ -1,0 +1,1 @@
+Arante's CPU Scheduling simulator is a web-based CPU Scheduling Simulator built using html, css and javascript. This simulator allows users to visualize and simulate through various CPU Scheduling algorithm's like FCFS(FIRST COME FIRST SERVE),SJF-NP(SHORTEST JOB FIRST-NON PREEMPTIVE),SJF-P(SHORTEST JOB FIRST-PREEMPTIVE),RR(ROUND ROBIN) AND MLFQ(MULTILEVEL FEEDBACK QUEUE).
