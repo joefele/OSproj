@@ -40,7 +40,7 @@ function updateProcessList() {
     processes.forEach(p => {
         const item = document.createElement('div');
         item.className = 'process-item';
-        item.textContent = `${p.pid} (AT: ${p.arrivalTime}, BT: ${p.burstTime}${p.priority !== null ? `, Priority: ${p.priority}` : ''})`;
+       item.textContent = `${p.pid} (AT: ${p.arrivalTime}, BT: ${p.burstTime})`;
         container.appendChild(item);
     });
 }
@@ -132,7 +132,6 @@ function runSJFPreemptive() {
     const result = [];
     let lastPid = null;
 
-    // Track first response time
     const started = {};
 
     while (queue.some(p => p.remainingTime > 0)) {
@@ -149,16 +148,13 @@ function runSJFPreemptive() {
             continue;
         }
 
-        // Select process with shortest remaining time
         const shortest = ready.reduce((a, b) => a.remainingTime < b.remainingTime ? a : b);
 
-        // Track response time once
         if (!(shortest.pid in started)) {
             shortest.responseTime = currentTime - shortest.arrivalTime;
             started[shortest.pid] = true;
         }
 
-        // Handle process switching
         if (lastPid !== shortest.pid) {
             result.push({ pid: shortest.pid, start: currentTime, end: currentTime + 1 });
             lastPid = shortest.pid;
@@ -173,11 +169,7 @@ function runSJFPreemptive() {
     displayGantt(result);
     calculateMetrics(result);
 }
-
-function runRoundRobin() {
-    console.log("Running Round Robin...");
-    const quantum = parseInt(document.getElementById('quantum').value, 10);
-
+    function runRoundRobin(quantum) {
     if (isNaN(quantum) || quantum <= 0) {
         alert("Please enter a valid quantum time.");
         return;
@@ -186,63 +178,67 @@ function runRoundRobin() {
     const queue = [...processes].map(p => ({ ...p }));
     const result = [];
     const readyQueue = [];
+    const started = {};
     let currentTime = 0;
-    let lastPid = null;
-
-    queue.sort((a, b) => a.arrivalTime - b.arrivalTime);
     let arrivedIndex = 0;
 
-    while (queue.some(p => p.remainingTime > 0)) {
-        // Add newly arrived processes to ready queue
+    
+    queue.sort((a, b) => a.arrivalTime - b.arrivalTime);
+
+
+    function enqueueNewArrivals() {
         while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= currentTime) {
             readyQueue.push(queue[arrivedIndex]);
             arrivedIndex++;
         }
+    }
 
+    enqueueNewArrivals();
+
+    while (queue.some(p => p.remainingTime > 0) || readyQueue.length > 0) {
         if (readyQueue.length === 0) {
-            // If no process is ready, insert idle time
-            if (lastPid !== 'IDLE') {
-                result.push({ pid: 'IDLE', start: currentTime, end: currentTime + 1 });
-                lastPid = 'IDLE';
-            } else {
-                result[result.length - 1].end++;
-            }
-            currentTime++;
+         
+            const nextArrival = queue.find(p => p.remainingTime > 0 && p.arrivalTime > currentTime);
+            const idleEnd = nextArrival ? nextArrival.arrivalTime : currentTime + 1;
+            result.push({ pid: 'IDLE', start: currentTime, end: idleEnd });
+            currentTime = idleEnd;
+            enqueueNewArrivals();
             continue;
         }
 
         const currentProcess = readyQueue.shift();
 
-        if (lastPid !== currentProcess.pid) {
-            result.push({
-                pid: currentProcess.pid,
-                start: currentTime,
-                end: currentTime + Math.min(quantum, currentProcess.remainingTime)
-            });
-        } else {
-            result[result.length - 1].end += Math.min(quantum, currentProcess.remainingTime);
+       
+        if (!(currentProcess.pid in started)) {
+            currentProcess.responseTime = currentTime - currentProcess.arrivalTime;
+            started[currentProcess.pid] = true;
         }
 
         const execTime = Math.min(quantum, currentProcess.remainingTime);
+        const startTime = currentTime;
+        const endTime = currentTime + execTime;
+
+        result.push({ pid: currentProcess.pid, start: startTime, end: endTime });
+
+        currentTime = endTime;
         currentProcess.remainingTime -= execTime;
-        currentTime += execTime;
 
-        // Add any processes that arrived during execution
-        while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= currentTime) {
-            readyQueue.push(queue[arrivedIndex]);
-            arrivedIndex++;
-        }
+        enqueueNewArrivals(); 
 
+        
         if (currentProcess.remainingTime > 0) {
             readyQueue.push(currentProcess);
         }
-
-        lastPid = currentProcess.pid;
     }
 
     displayGantt(result);
     calculateMetrics(result);
 }
+
+
+
+
+    
 
 
 
@@ -320,6 +316,5 @@ function calculateMetrics(schedule) {
 
     document.getElementById('resultsSection').classList.remove('hidden');
 }
-
 
 
