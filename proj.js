@@ -11,10 +11,13 @@ function getColor(id) {
 }
 
 function addProcess() {
-    const pid = document.getElementById('processId').value || `P${processes.length}`;
-    const arrivalTime = parseInt(document.getElementById('arrivalTime').value, 10);
-    const burstTime = parseInt(document.getElementById('burstTime').value, 10);
+     const arrivalInput = document.getElementById('arrivalTime');
+    const burstInput = document.getElementById('burstTime');
     const priorityInput = document.getElementById('priority');
+
+    const pid = pidInput.value || `P${processes.length}`;
+    const arrivalTime = parseInt(arrivalInput.value, 10);
+    const burstTime = parseInt(burstInput.value, 10);
     const priority = priorityInput && !priorityInput.closest('#priorityField').classList.contains('hidden')
         ? parseInt(priorityInput.value, 10)
         : null;
@@ -26,6 +29,12 @@ function addProcess() {
 
     processes.push({ pid, arrivalTime, burstTime, remainingTime: burstTime, priority });
     updateProcessList();
+
+
+    pidInput.value = '';
+    arrivalInput.value = '';
+    burstInput.value = '';
+    if (priorityInput) priorityInput.value = '';
 }
 
 function updateProcessList() {
