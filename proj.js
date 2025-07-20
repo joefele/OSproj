@@ -235,6 +235,88 @@ function runSJFPreemptive() {
     calculateMetrics(result);
 }
 
+function runMLFQ() {
+    const queueCount = 4;
+    const quantums = [];
+    const allotments = [];
+
+    for (let i = 0; i < queueCount; i++) {
+        quantums[i] = parseInt(document.getElementById(`quantumQ${i}`).value, 10);
+        allotments[i] = parseInt(document.getElementById(`allotmentQ${i}`).value, 10);
+        if (isNaN(quantums[i]) || isNaN(allotments[i]) || quantums[i] <= 0 || allotments[i] <= 0) {
+            alert(`Invalid quantum or allotment in Q${i}`);
+            return;
+        }
+    }
+
+    const queue = [...processes].map(p => ({ ...p, queueLevel: 0, allotmentUsed: 0 }));
+    const result = [];
+    const readyQueues = [[], [], [], []];
+    const started = {};
+    let currentTime = 0;
+    let arrivedIndex = 0;
+
+    queue.sort((a, b) => a.arrivalTime - b.arrivalTime);
+
+    function enqueueNewArrivals() {
+        while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= currentTime) {
+            readyQueues[0].push(queue[arrivedIndex]);
+            arrivedIndex++;
+        }
+    }
+
+    enqueueNewArrivals();
+
+    while (queue.some(p => p.remainingTime > 0)) {
+        enqueueNewArrivals();
+
+        let currentProcess = null;
+        let currentLevel = -1;
+
+        for (let i = 0; i < queueCount; i++) {
+            if (readyQueues[i].length > 0) {
+                currentProcess = readyQueues[i].shift();
+                currentLevel = i;
+                break;
+            }
+        }
+
+        if (!currentProcess) {
+            result.push({ pid: 'IDLE', start: currentTime, end: currentTime + 1 });
+            currentTime++;
+            continue;
+        }
+
+        if (!(currentProcess.pid in started)) {
+            currentProcess.responseTime = currentTime - currentProcess.arrivalTime;
+            started[currentProcess.pid] = true;
+        }
+
+        const execTime = Math.min(quantums[currentLevel], currentProcess.remainingTime);
+        const startTime = currentTime;
+        const endTime = currentTime + execTime;
+
+        result.push({ pid: currentProcess.pid, start: startTime, end: endTime });
+        currentTime = endTime;
+        currentProcess.remainingTime -= execTime;
+        currentProcess.allotmentUsed += execTime;
+
+        enqueueNewArrivals();
+
+        if (currentProcess.remainingTime > 0) {
+            if (currentProcess.allotmentUsed >= allotments[currentLevel] && currentLevel < queueCount - 1) {
+                currentProcess.queueLevel++;
+                currentProcess.allotmentUsed = 0;
+                readyQueues[currentLevel + 1].push(currentProcess);
+            } else {
+                readyQueues[currentLevel].push(currentProcess);
+            }
+        }
+    }
+
+    displayGantt(result);
+    calculateMetrics(result);
+}
 
 
 
