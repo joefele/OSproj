@@ -15,4 +15,6 @@ HOW TO RUN:
 
 <img width="1055" height="501" alt="Screenshot 2025-07-21 014016" src="https://github.com/user-attachments/assets/7ca090cf-c7e9-4d0a-83a8-7e14c41d008e" />
 
-  
+  <img width="876" height="415" alt="Screenshot 2025-07-21 014507" src="https://github.com/user-attachments/assets/3957ec32-9d81-4ef5-93c3-dfac6a84f5ec" />
+
+<img width="840" height="517" alt="Screenshot 2025-07-21 014408" src="https://github.com/user-attachments/assets/52171f7b-a410-4b59-a297-198189e89e66" />
