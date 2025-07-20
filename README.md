@@ -17,3 +17,11 @@ HOW TO RUN:
 <img width="840" height="517" alt="Screenshot 2025-07-21 014408" src="https://github.com/user-attachments/assets/52171f7b-a410-4b59-a297-198189e89e66" />
   <img width="876" height="415" alt="Screenshot 2025-07-21 014507" src="https://github.com/user-attachments/assets/3957ec32-9d81-4ef5-93c3-dfac6a84f5ec" />
 <img width="809" height="431" alt="Screenshot 2025-07-21 014543" src="https://github.com/user-attachments/assets/aae7dc6c-8299-4b80-b94d-6b8ed8adfb36" />
+
+
+Known bugs, limitations or incomplete features:
+* Sometimes there is a bug where 2 processes switches in the gantt chart.
+* The metrics above the gantt chart doesnt occupy the gant chart.
+
+Member/s:
+Arante, Joefele Keate T. BSIT-2 
