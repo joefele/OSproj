@@ -14,7 +14,6 @@
             <p>Select a Scheduling Algorithm to Simulate</p>
         </div>
 
-       
         <div class="card">
             <h2>Process Configuration</h2>
 
@@ -23,26 +22,22 @@
                 <input type="number" id="numProcesses" value="3" min="1" max="10">
             </div>
 
-           
             <div class="form-group">
                 <label for="algorithmSelect">Select Scheduling Algorithm:</label>
                 <select id="algorithmSelect" class="form-control">
                     <option value="fcfs">First Come First Serve (FCFS)</option>
                     <option value="sjf_np">SJF (Non-Preemptive)</option>
                     <option value="sjf_p">SJF (Preemptive)</option>
-                    <option value="priority">Priority Scheduling</option>
                     <option value="rr">Round Robin (RR)</option>
                     <option value="mlfq">Multi-Level Feedback Queue (MLFQ)</option>
                 </select>
             </div>
 
-       
             <div class="form-group hidden" id="timeQuantumGroup">
                 <label for="timeQuantum">Time Quantum (for RR or MLFQ):</label>
                 <input type="number" id="timeQuantum" min="1" value="2">
             </div>
 
-           
             <div id="manualInput" class="form-group">
                 <h3>Add Process Manually:</h3>
                 <div class="input-row">
@@ -58,17 +53,13 @@
                         <label>Burst Time</label>
                         <input type="number" id="burstTime" min="1" placeholder="1">
                     </div>
-                    <div class="input-field hidden" id="priorityField">
-                        <label>Priority</label>
-                        <input type="number" id="priority" min="0" placeholder="0">
-                    </div>
+                    <!-- Priority input removed -->
                     <div class="input-field">
                         <button onclick="addProcess()" class="btn btn-primary">Add</button>
                     </div>
                 </div>
             </div>
 
-           
             <div class="form-group">
                 <h3>Current Processes:</h3>
                 <div id="processList" class="process-list">
@@ -90,15 +81,11 @@
         </div>
 
         <div id="resultsSection" class="hidden">
-          
             <div class="card">
                 <h2>Gantt Chart</h2>
-                <div id="ganttChart" class="gantt-container">
-                  
-                </div>
+                <div id="ganttChart" class="gantt-container"></div>
             </div>
 
-         
             <div class="card">
                 <h2>Process Table</h2>
                 <div class="table-container">
@@ -113,28 +100,24 @@
                                 <th>Response Time</th>
                             </tr>
                         </thead>
-                        <tbody>
-                       
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
-                <div id="averageMetrics" class="average-metrics">
-                   
-                </div>
+                <div id="averageMetrics" class="average-metrics"></div>
             </div>
         </div>
     </div>
 
     <script src="proj.js"></script>
     <script>
-        
+        // Update UI toggles
         document.getElementById("algorithmSelect").addEventListener("change", function () {
             const algorithm = this.value;
             document.getElementById("timeQuantumGroup").classList.toggle("hidden", !(algorithm === "rr" || algorithm === "mlfq"));
-            document.getElementById("priorityField").classList.toggle("hidden", algorithm !== "priority");
+            // Priority field toggle removed
         });
 
-
+        // Run selected algorithm
         function runSelectedAlgorithm() {
             const algorithm = document.getElementById("algorithmSelect").value;
 
@@ -147,9 +130,6 @@
                     break;
                 case "sjf_p":
                     runSJFPreemptive();
-                    break;
-                case "priority":
-                    runPriority();
                     break;
                 case "rr":
                     const tqRR = parseInt(document.getElementById("timeQuantum").value, 10);
