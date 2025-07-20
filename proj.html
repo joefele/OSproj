@@ -8,10 +8,9 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
-            <h1>CPU Scheduling Simulator</h1>
-            <p>Select a Scheduling Algorithm to Simulate</p>
+            <h1>Arante's CPU Scheduling Simulator</h1>
+            <p>Operating Systems Project Summer</p>
         </div>
 
         <div class="card">
@@ -34,8 +33,52 @@
             </div>
 
             <div class="form-group hidden" id="timeQuantumGroup">
-                <label for="timeQuantum">Time Quantum (for RR or MLFQ):</label>
+                <label for="timeQuantum">Time Quantum (for RR only):</label>
                 <input type="number" id="timeQuantum" min="1" value="2">
+            </div>
+
+            <div id="mlfqSettings" class="form-group hidden">
+                <h3>MLFQ Settings</h3>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Quantum Q0:</label>
+                        <input type="number" id="quantumQ0" value="1" min="1">
+                    </div>
+                    <div class="input-field">
+                        <label>Allotment Q0:</label>
+                        <input type="number" id="allotmentQ0" value="4" min="1">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Quantum Q1:</label>
+                        <input type="number" id="quantumQ1" value="1" min="1">
+                    </div>
+                    <div class="input-field">
+                        <label>Allotment Q1:</label>
+                        <input type="number" id="allotmentQ1" value="4" min="1">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Quantum Q2:</label>
+                        <input type="number" id="quantumQ2" value="1" min="1">
+                    </div>
+                    <div class="input-field">
+                        <label>Allotment Q2:</label>
+                        <input type="number" id="allotmentQ2" value="4" min="1">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Quantum Q3:</label>
+                        <input type="number" id="quantumQ3" value="1" min="1">
+                    </div>
+                    <div class="input-field">
+                        <label>Allotment Q3:</label>
+                        <input type="number" id="allotmentQ3" value="4" min="1">
+                    </div>
+                </div>
             </div>
 
             <div id="manualInput" class="form-group">
@@ -53,7 +96,6 @@
                         <label>Burst Time</label>
                         <input type="number" id="burstTime" min="1" placeholder="1">
                     </div>
-                    <!-- Priority input removed -->
                     <div class="input-field">
                         <button onclick="addProcess()" class="btn btn-primary">Add</button>
                     </div>
@@ -110,14 +152,17 @@
 
     <script src="proj.js"></script>
     <script>
-        // Update UI toggles
+      
         document.getElementById("algorithmSelect").addEventListener("change", function () {
             const algorithm = this.value;
-            document.getElementById("timeQuantumGroup").classList.toggle("hidden", !(algorithm === "rr" || algorithm === "mlfq"));
-            // Priority field toggle removed
+            const showRR = algorithm === "rr";
+            const showMLFQ = algorithm === "mlfq";
+
+            document.getElementById("timeQuantumGroup").classList.toggle("hidden", !showRR);
+            document.getElementById("mlfqSettings").classList.toggle("hidden", !showMLFQ);
         });
 
-        // Run selected algorithm
+        
         function runSelectedAlgorithm() {
             const algorithm = document.getElementById("algorithmSelect").value;
 
@@ -136,8 +181,7 @@
                     runRoundRobin(tqRR);
                     break;
                 case "mlfq":
-                    const tqMLFQ = parseInt(document.getElementById("timeQuantum").value, 10);
-                    runMLFQ(tqMLFQ);
+                    runMLFQ(); 
                     break;
                 default:
                     alert("Invalid algorithm selected.");
