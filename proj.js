@@ -11,7 +11,7 @@ function getColor(id) {
 }
 
 function addProcess() {
-     const pid = document.getElementById('processId').value || `P${processes.length}`;
+    const pid = document.getElementById('processId').value || `P${processes.length}`;
     const arrivalTime = parseInt(document.getElementById('arrivalTime').value, 10);
     const burstTime = parseInt(document.getElementById('burstTime').value, 10);
     const priorityInput = document.getElementById('priority');
@@ -175,40 +175,40 @@ function runSJFPreemptive() {
         return;
     }
 
-    const queue = [...processes].map(p => ({ ...p }));
+    const queue = [...processes].map(p => ({ 
+        ...p, 
+        remainingTime: p.burstTime 
+    }));
+
     const result = [];
     const readyQueue = [];
     const started = {};
     let currentTime = 0;
     let arrivedIndex = 0;
 
-    
     queue.sort((a, b) => a.arrivalTime - b.arrivalTime);
 
-
-    function enqueueNewArrivals() {
-        while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= currentTime) {
+    function enqueueNewArrivals(untilTime) {
+        while (arrivedIndex < queue.length && queue[arrivedIndex].arrivalTime <= untilTime) {
             readyQueue.push(queue[arrivedIndex]);
             arrivedIndex++;
         }
     }
 
-    enqueueNewArrivals();
+    enqueueNewArrivals(currentTime);
 
     while (queue.some(p => p.remainingTime > 0) || readyQueue.length > 0) {
         if (readyQueue.length === 0) {
-         
             const nextArrival = queue.find(p => p.remainingTime > 0 && p.arrivalTime > currentTime);
             const idleEnd = nextArrival ? nextArrival.arrivalTime : currentTime + 1;
             result.push({ pid: 'IDLE', start: currentTime, end: idleEnd });
             currentTime = idleEnd;
-            enqueueNewArrivals();
+            enqueueNewArrivals(currentTime);
             continue;
         }
 
         const currentProcess = readyQueue.shift();
 
-       
         if (!(currentProcess.pid in started)) {
             currentProcess.responseTime = currentTime - currentProcess.arrivalTime;
             started[currentProcess.pid] = true;
@@ -223,17 +223,17 @@ function runSJFPreemptive() {
         currentTime = endTime;
         currentProcess.remainingTime -= execTime;
 
-        enqueueNewArrivals(); 
+        enqueueNewArrivals(currentTime); // check new arrivals after this slice
 
-        
         if (currentProcess.remainingTime > 0) {
-            readyQueue.push(currentProcess);
+            readyQueue.push(currentProcess); // requeue unfinished
         }
     }
 
     displayGantt(result);
     calculateMetrics(result);
 }
+
 
 function runMLFQ() {
     const queueCount = 4;
@@ -331,7 +331,7 @@ function displayGantt(schedule) {
         const block = document.createElement('div');
         block.className = 'gantt-block';
         block.textContent = item.pid;
-        block.style.width = ((item.end - item.start) / totalTime) * 100 + '%';
+        block.style.flex = (item.end - item.start).toString();
         block.title = `${item.pid}: ${item.start} - ${item.end}`;
 
         if (item.pid === 'IDLE') {
@@ -405,14 +405,14 @@ function calculateMetrics(schedule) {
     document.getElementById('resultsSection').classList.remove('hidden');
 }   
 function renderTimeLabels(totalTime) {
-    const labelContainer = document.getElementById('time-labels');
+     const labelContainer = document.getElementById('time-labels');
     labelContainer.innerHTML = '';
+    labelContainer.style.display = 'flex';
 
     for (let i = 0; i <= totalTime; i++) {
         const label = document.createElement('span');
         label.innerText = i;
-        label.style.display = 'inline-block';
-        label.style.width = '61px'; // Must match width per time unit
+        label.style.flex = '1';
         label.style.textAlign = 'center';
         label.style.fontSize = '12px';
         label.style.color = '#444';
